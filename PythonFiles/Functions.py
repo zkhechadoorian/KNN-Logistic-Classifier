@@ -37,7 +37,7 @@ def readFile(filename):
                     data.append([float(val) for val in row[:-1]])
                     label = row[-1]
                     labels.append(0 if label == 'Cammeo' else 1)
-                elif filename == "agaricus-lepiota.data":
+                elif "agaricus-lepiota.data" in filename :
                     label = 0 if row[0] == 'e' else 1
                     labels.append(label)
 
@@ -252,6 +252,7 @@ def bestKValue(KNNmodel, dataSet, kRange=10):
     accuracy = []
     k_val =[]
     for k in range(kRange):
+        printg("Testing k = %d" % (k+1))
         k_val.append(k+1)
         KNNmodel.setK(k+1)
         accuracy.append(KNNmodel.kFoldCross(dataSet,5, False))
@@ -301,6 +302,22 @@ class dataAnalysis:
         categories = self.categories
         size = self.size
         labels = column = data[:, -1]
+
+        # print unique values in labels
+        unique_labels, label_counts = np.unique(labels, return_counts=True)
+        print("Unique Labels and Counts:")
+        for label, count in zip(unique_labels, label_counts):
+            percentage = round(100 * count / size, 2)
+            print(f"Label: {label}, Count: {count}, Percentage: %{percentage}")
+        
+        # separate data into edible and poisonous
+        edible_data = data[data[:, -1] == 'e']
+        poisonous_data = data[data[:, -1] == 'p']
+
+        # print shapes of edible and poisonous data
+        print(f"\nShape of Edible Data: {edible_data.shape}")
+        print(f"Shape of Poisonous Data: {poisonous_data.shape}")
+    
         print("=====================================================")
         print("Attribute Analysis:")
         print("=====================================================")
@@ -351,11 +368,13 @@ class dataAnalysis:
             print(f"Mode: {mode}")
             print(f"Standard Deviation: {std_dev}")
 
+            # Overlay two box-plots, one for each classification
             plt.figure(figsize=(4, 4))
-            plt.bar(labels, column, edgecolor='black')
-            plt.xlabel("classification")
+            plt.boxplot([edible_data[:, i].astype(float), poisonous_data[:, i].astype(float)],
+                        labels=['Edible', 'Poisonous'])
+            plt.xlabel("Classification")
             plt.ylabel(category)
-            plt.title("Bar Chart of Numeric Data by Labels")
+            plt.title(f"Box Plot of {category} by Classification")
             plt.show()
 
 def main() -> None:
