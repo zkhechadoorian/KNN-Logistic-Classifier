@@ -252,7 +252,7 @@ def bestKValue(KNNmodel, dataSet, kRange=10):
     accuracy = []
     k_val =[]
     for k in range(kRange):
-        printg("Testing k = %d" % (k+1))
+        print("Testing k = %d" % (k+1))
         k_val.append(k+1)
         KNNmodel.setK(k+1)
         accuracy.append(KNNmodel.kFoldCross(dataSet,5, False))
@@ -265,6 +265,13 @@ def bestKValue(KNNmodel, dataSet, kRange=10):
     plt.grid(True)
     plt.show()
 
+    # return the best k value based on the highest accuracy
+    best_k_index = np.argmax(accuracy)
+    best_k = k_val[best_k_index]
+    best_accuracy = accuracy[best_k_index]
+    print(f"Best k value: {best_k} with accuracy: {best_accuracy:.2f}")
+    return best_k
+
 # In[ ]:
 class dataAnalysis:
     def __init__(self, data, categories, classifications):
@@ -272,6 +279,41 @@ class dataAnalysis:
         self.size = len(data)
         self.categories = categories
         self.classifications = classifications
+
+    def head(self, n=5):
+        '''
+        ===================================================================================
+        DESCRIPTION: 
+        ===================================================================================
+        Print the first n rows of the dataset
+        ===================================================================================
+        '''
+        print("=====================================================")
+        print(f"First {n} rows of data:")
+        print("=====================================================")
+        for i in range(min(n, len(self.data))):
+            print(self.data[i])
+
+    def checkMissingValues(self):
+        '''
+        ===================================================================================
+        DESCRIPTION: 
+        ===================================================================================
+        Check for any missing values in the dataset
+        ===================================================================================
+        '''
+        # print type of data
+        print(f"Data type: {type(self.data)}")
+        # print first three rows of data
+        print("First three rows of data:")
+        print(self.data[:3])
+
+        # iterate through each row
+        for i, row in enumerate(self.data):
+            # print row
+            print(f"Row {i}: {row}")
+
+
     def printLabelStats(self):
         '''
         ===================================================================================
